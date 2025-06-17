@@ -2,8 +2,7 @@ package main
 
 import (
 	config "digital-wallet/src/config"
-	database "digital-wallet/src/utils/database"
-	"fmt"
+	handlers "digital-wallet/src/handlers"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -11,8 +10,6 @@ import (
 )
 
 func main() {
-	var db database.Connection
-
 	app := fiber.New(fiber.Config{
 		AppName:       config.NewApp().AppName,
 		CaseSensitive: true,
@@ -22,46 +19,14 @@ func main() {
 	app.Use(recover.New())
 	app.Use(logger.New())
 
-	app.Get("/balance-inquiry/:phoneNumber", func(c *fiber.Ctx) error {
-		phoneNumber, _ := c.ParamsInt("phoneNumber", 0)
+	// Create a /transaction endpoint group
+	transcation := app.Group("/transaction")
 
-		return c.Status(fiber.StatusOK).JSON(&fiber.Map{
-			"code":    fiber.StatusOK,
-			"status":  "ok",
-			"message": "success to get current balance!",
-			"data":    db.CheckBalance(phoneNumber),
-		})
-	})
-
-	app.Post("/withdrawal", func(c *fiber.Ctx) error {
-		type request struct {
-			PhoneNumber int     `json:"phone_number" form:"phone_number"`
-			Amount      float64 `json:"amount" form:"amount"`
-		}
-
-		data := new(request)
-
-		if err := c.BodyParser(data); err != nil {
-			fmt.Printf("error when get user detail = %s\n", err.Error())
-		}
-
-		return c.Status(fiber.StatusOK).JSON(&fiber.Map{
-			"code":    fiber.StatusOK,
-			"status":  "ok",
-			"message": db.Withdrawal(data.PhoneNumber, data.Amount),
-			"data":    nil,
-		})
-	})
+	transcation.Get("/balance-inquiry/:phoneNumber", handlers.CheckBalance)
+	transcation.Post("/withdrawal", handlers.Withdrawal)
 
 	// 404 handling
-	app.Use(func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusNotFound).JSON(&fiber.Map{
-			"code":    fiber.StatusNotFound,
-			"status":  "not_found",
-			"message": "page not found",
-			"data":    fiber.Map{},
-		})
-	})
+	app.Use(handlers.NotFound)
 
 	app.Listen(":" + config.NewApp().Port)
 }
