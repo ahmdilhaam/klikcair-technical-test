@@ -1,0 +1,93 @@
+{
+	"info": {
+		"_postman_id": "844c47f8-819a-44e9-935c-7ba44e984827",
+		"name": "Digital Wallet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6239414"
+	},
+	"item": [
+		{
+			"name": "Transaction",
+			"item": [
+				{
+					"name": "Check Balance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:1929/transaction/balance-inquiry/:phone",
+							"host": [
+								"localhost"
+							],
+							"port": "1929",
+							"path": [
+								"transaction",
+								"balance-inquiry",
+								":phone"
+							],
+							"variable": [
+								{
+									"key": "phone",
+									"value": "6282123456789"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Withdrawal",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "phone_number",
+									"value": "6282123456789",
+									"type": "text"
+								},
+								{
+									"key": "amount",
+									"value": "150000",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:1929/transcation/withdrawal",
+							"host": [
+								"localhost"
+							],
+							"port": "1929",
+							"path": [
+								"transcation",
+								"withdrawal"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Not Found",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:1929/not-found",
+					"host": [
+						"localhost"
+					],
+					"port": "1929",
+					"path": [
+						"not-found"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
